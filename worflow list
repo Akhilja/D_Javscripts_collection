@@ -1,0 +1,41 @@
+## get the worflow list 
+
+```
+
+import { workflowsClient } from "@dynatrace-sdk/client-automation";
+
+export default async function () {
+  const response = await workflowsClient.getWorkflows({
+    adminAccess: true,  // works once actor has automation:workflows:admin
+  });
+
+  const results = (response.results ?? []).map((wf) => {
+    let triggerStatus = "No trigger";
+    const trigger = wf.trigger;
+
+    if (trigger?.schedule) {
+      triggerStatus = trigger.schedule.isActive
+        ? "Schedule trigger (enabled)"
+        : "Schedule trigger (disabled)";
+    } else if (trigger?.eventTrigger) {
+      triggerStatus = "Event trigger";
+    } else if (trigger?.webhook) {
+      triggerStatus = "Webhook trigger";
+    }
+
+    return {
+      name:          wf.title,
+      state:         wf.isPrivate ? "draft (private)" : "live (public)",
+      actor:         wf.actor ?? "N/A",
+      owner:         wf.owner ?? "N/A",
+      triggerStatus: triggerStatus,
+    };
+  });
+
+  console.log(`Total workflows found: ${results.length}`);
+  console.table(results);
+
+  return results;
+}
+
+```
