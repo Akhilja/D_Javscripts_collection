@@ -1,7 +1,3 @@
-## get the worflow list 
-
-```java
-
 import { workflowsClient } from "@dynatrace-sdk/client-automation";
 
 export default async function () {
@@ -17,11 +13,8 @@ export default async function () {
       offset: offset,
     });
 
-    // On first page, log the raw first workflow object to inspect all available fields
-    if (offset === 0 && response.results?.length > 0) {
-      console.log("Raw workflow object (first item):", JSON.stringify(response.results[0], null, 2));
-      totalCount = response.count; // total number of workflows available
-      console.log(`Total workflows available: ${totalCount}`);
+    if (totalCount === null) {
+      totalCount = response.count;
     }
 
     for (const wf of response.results ?? []) {
@@ -43,7 +36,6 @@ export default async function () {
         name:          wf.title,
         state:         wf.isPrivate ? "draft (private)" : "live (public)",
         actor:         wf.actor ?? "N/A",
-        // Try all known owner field variants — check the raw log above to confirm the right one
         owner:         wf.owner ?? wf.ownerId ?? wf.ownerName ?? "N/A",
         triggerStatus: triggerStatus,
       });
@@ -53,10 +45,7 @@ export default async function () {
 
   } while (totalCount === null || offset < totalCount);
 
-  console.log(`Total workflows fetched: ${allWorkflows.length}`);
   console.table(allWorkflows);
 
   return allWorkflows;
 }
-
-```
