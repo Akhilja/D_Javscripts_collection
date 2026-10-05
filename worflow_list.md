@@ -1,6 +1,6 @@
 ## get the worflow list 
 
-```
+```java
 
 import { workflowsClient } from "@dynatrace-sdk/client-automation";
 
