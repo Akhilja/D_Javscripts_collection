@@ -1,3 +1,7 @@
+## get the list of worflows 
+
+```java
+
 import { workflowsClient } from "@dynatrace-sdk/client-automation";
 
 export default async function () {
@@ -49,3 +53,5 @@ export default async function () {
 
   return allWorkflows;
 }
+
+```
